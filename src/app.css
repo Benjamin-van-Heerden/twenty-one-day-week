@@ -1,0 +1,43 @@
+/* Blue Light scheme (Default) */
+/* Can be forced with data-theme="light" */
+[data-theme="light"],
+:root:not([data-theme="dark"]) {
+  --primary: #1B7CD0;
+  --primary-hover: #1E88E5;
+  --primary-focus: rgba(30, 136, 229, 0.125);
+  --primary-inverse: #FFF;
+  --secondary: #D84615;
+  --secondary-hover: #DF663D;
+}
+
+/* Blue Dark scheme (Auto) */
+/* Automatically enabled if user has Dark mode enabled */
+@media only screen and (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --primary: #1B7CD0;
+    --primary-hover: #1E88E5;
+    --primary-focus: rgba(30, 136, 229, 0.25);
+    --primary-inverse: #FFF;
+    --secondary: #D84615;
+    --secondary-hover: #DF663D;
+  }
+}
+
+/* Blue Dark scheme (Forced) */
+/* Enabled if forced with data-theme="dark" */
+[data-theme="dark"] {
+  --primary: #1B7CD0;
+  --primary-hover: #1E88E5;
+  --primary-focus: rgba(30, 136, 229, 0.25);
+  --primary-inverse: #FFF;
+  --secondary: #D84615;
+  --secondary-hover: #DF663D;
+}
+
+/* Blue (Common styles) */
+:root {
+  --form-element-active-border-color: var(--primary);
+  --form-element-focus-color: var(--primary-focus);
+  --switch-color: var(--primary-inverse);
+  --switch-checked-background-color: var(--primary);
+}

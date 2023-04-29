@@ -1,0 +1,15 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "driver": "MySQL",
+            "name": "PScale Dev",
+            "group": "Planetscale",
+            "connectString": "mysql://42bsu89k1lvfbyyvhluw:pscale_pw_FsEMuW7vk62HIZh4DDo0pEolcUoJsBDc6spg1xOsZrF@aws.connect.psdb.cloud/dev-db?ssl={\"rejectUnauthorized\":true}"
+        }
+    ]
+}
