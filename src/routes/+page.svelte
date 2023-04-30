@@ -1,15 +1,76 @@
 <script lang="ts">
-	import { fade } from 'svelte/transition';
+	import { fade } from "svelte/transition";
+	import { superForm } from "sveltekit-superforms/client";
+	import SuperDebug from "sveltekit-superforms/client/SuperDebug.svelte";
+	import type { PageData } from "./$types";
+	import { z } from "zod";
+	import * as HomeSchema from "./schemas";
 
-	function login() {
-		console.log('login');
+	let show_register = false;
+	let loading = false;
+
+	let login_button: HTMLButtonElement;
+	let register_button: HTMLButtonElement;
+	let goto_login_button: HTMLButtonElement;
+	let goto_register_button: HTMLButtonElement;
+
+	function switch_login_register() {
+		show_register = !show_register;
 	}
 
-	let showRegister = true;
+	export let data: PageData;
 
-	function switchLoginRegister() {
-		showRegister = !showRegister;
-	}
+	const {
+		form: login_form,
+		errors: login_errors,
+		enhance: login_enhance
+	} = superForm(data.login_form, {
+		invalidateAll: false,
+		validators: HomeSchema.LoginSchema,
+		onSubmit: () => {
+			loading = true;
+			login_button.disabled = true;
+			goto_register_button.disabled = true;
+		},
+		onResult: () => {
+			loading = false;
+			login_button.disabled = false;
+			goto_register_button.disabled = false;
+		},
+		onError: () => {
+			loading = false;
+			login_button.disabled = false;
+			goto_register_button.disabled = false;
+		}
+	});
+
+	const {
+		form: register_form,
+		errors: register_errors,
+		enhance: register_enhance
+	} = superForm(data.register_form, {
+		invalidateAll: false,
+		validators: HomeSchema.RegisterSchema,
+		onSubmit: ({ cancel }) => {
+			loading = true;
+			register_button.disabled = true;
+			goto_login_button.disabled = true;
+			if ($register_form.password !== $register_form.confirm_password) {
+				alert("Passwords do not match");
+				cancel();
+			}
+		},
+		onResult: () => {
+			loading = false;
+			register_button.disabled = false;
+			goto_login_button.disabled = false;
+		},
+		onError: () => {
+			loading = false;
+			register_button.disabled = false;
+			goto_login_button.disabled = false;
+		}
+	});
 </script>
 
 <div class="custom-shape-divider-bottom-1682715300">
@@ -37,29 +98,119 @@
 </div>
 
 <main>
-	{#if !showRegister}
-		<form in:fade on:submit={login}>
-			<input type="text" name="name" placeholder="Name" />
-			<input type="email" name="email" placeholder="Email" />
-			<input type="submit" value="Login" />
+	{#if !show_register}
+		<form in:fade method="post" action="?/login" use:login_enhance>
+			<input
+				type="email"
+				name="user_email"
+				placeholder="Email"
+				bind:value={$login_form.user_email}
+			/>
+			{#if $login_errors.user_email}
+				<small>{$login_errors.user_email}</small>
+			{/if}
+			<input
+				type="password"
+				name="password"
+				placeholder="Password"
+				bind:value={$login_form.password}
+			/>
+			{#if $login_errors.password}
+				<small>{$login_errors.password}</small>
+			{/if}
+			<button type="submit" bind:this={login_button}>Login</button>
 			<div class="registerField">
+				{#if loading}
+					<div class="spinner" />
+				{/if}
 				<label for="registerButton">Don't have an account?</label>
-				<button id="registerButton" class="loginNavButton" on:click={switchLoginRegister}>Register</button>
+				<button
+					id="registerButton"
+					class="loginNavButton"
+					on:click={switch_login_register}
+					bind:this={goto_register_button}>Register</button
+				>
 			</div>
 		</form>
 	{:else}
-		<form in:fade on:submit={login}>
-			<input type="text" name="name" placeholder="Name" />
-			<input type="email" name="email" placeholder="Email" />
-			<input type="submit" value="Login" />
+		<form in:fade method="post" action="?/register" use:register_enhance>
+			<input
+				type="text"
+				name="first_name"
+				placeholder="First Name"
+				bind:value={$register_form.first_name}
+			/>
+			{#if $register_errors.first_name}
+				<small>{$register_errors.first_name}</small>
+			{/if}
+			<input
+				type="text"
+				name="last_name"
+				placeholder="Last Name"
+				bind:value={$register_form.last_name}
+			/>
+			{#if $register_errors.last_name}
+				<small>{$register_errors.last_name}</small>
+			{/if}
+			<input
+				type="email"
+				name="user_email"
+				placeholder="Email"
+				bind:value={$register_form.user_email}
+			/>
+			{#if $register_errors.user_email}
+				<small>{$register_errors.user_email}</small>
+			{/if}
+			<input
+				type="password"
+				name="password"
+				placeholder="Password"
+				bind:value={$register_form.password}
+			/>
+			{#if $register_errors.password}
+				<small>{$register_errors.password}</small>
+			{/if}
+			<input
+				type="password"
+				name="confirm_password"
+				placeholder="Confirm Password"
+				bind:value={$register_form.confirm_password}
+			/>
+			{#if $register_errors.confirm_password}
+				<small>{$register_errors.confirm_password}</small>
+			{/if}
+			<button type="submit" bind:this={register_button}>Register</button>
 			<div class="loginField">
-				<button id="backToLoginButton" class="loginNavButton" on:click={switchLoginRegister}>Back to Login</button>
+				<button
+					id="backToLoginButton"
+					class="loginNavButton"
+					on:click={switch_login_register}
+					bind:this={goto_login_button}>Back to Login</button
+				>
+				{#if loading}
+					<div class="spinner" />
+				{/if}
 			</div>
 		</form>
 	{/if}
 </main>
 
 <style>
+	.spinner {
+		border: 4px solid rgba(0, 0, 0, 0.1);
+		width: 1.5rem;
+		height: 1.5rem;
+		border-radius: 50%;
+		border-left-color: var(--secondary);
+		animation: spin 1s ease infinite;
+		margin-right: auto;
+	}
+
+	.loginField .spinner {
+		margin-right: 0;
+		margin-left: auto;
+	}
+
 	.loginNavButton {
 		border: none;
 		background-color: var(--secondary);
@@ -73,7 +224,7 @@
 
 	.loginNavButton:hover {
 		background-color: var(--secondary-hover);
-	}  
+	}
 
 	.loginField {
 		display: flex;
@@ -90,6 +241,7 @@
 	}
 
 	main {
+		z-index: 10;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -99,6 +251,10 @@
 	form {
 		margin-top: 2em;
 		width: 50vw;
+	}
+
+	form input {
+		height: 2rem;
 	}
 
 	.custom-shape-divider-bottom-1682715300 {
