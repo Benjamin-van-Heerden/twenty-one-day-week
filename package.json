@@ -23,6 +23,8 @@
 		"@typescript-eslint/parser": "^5.45.0",
 		"argon2": "^0.30.3",
 		"dotenv": "^16.0.3",
+		"drizzle-kit": "^0.17.6",
+		"drizzle-orm": "^0.25.4",
 		"eslint": "^8.28.0",
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-svelte": "^2.26.0",

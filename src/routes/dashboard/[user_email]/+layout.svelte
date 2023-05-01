@@ -30,7 +30,7 @@
 
 	nav {
 		width: 200px;
-		height: 100%;
+		height: 300px;
 		background-color: var(--primary-focus);
 		color: black;
 		border-radius: 5px;
@@ -39,7 +39,7 @@
 
 	nav a {
 		text-decoration: underline;
-		color: var(--primary-inverse);
+		color: var(--secondary);
 		margin-left: 0.25rem;
 	}
 

@@ -1,62 +1,59 @@
+import { drizzle } from "drizzle-orm/planetscale-serverless";
+import { eq } from "drizzle-orm";
 import { connect } from "@planetscale/database";
 import argon2 from "argon2";
-import type { z } from "zod";
 import jwt from "jsonwebtoken";
 
-import { PSCALE_CONNECTION_STRING, JWT_SEED } from "$env/static/private";
-import type * as models from "./models";
+import { DATABASE_HOST, DATABASE_USERNAME, DATABASE_PASSWORD, JWT_SEED } from "$env/static/private";
+import type * as schemaTypes from "../db/schema";
+import * as schemaModels from "../db/schema";
 
 type SessionInfo = {
 	jwt: string;
 	user_email: string;
 };
 
-const conn = connect({ url: PSCALE_CONNECTION_STRING });
+const connection = connect({
+	host: DATABASE_HOST,
+	username: DATABASE_USERNAME,
+	password: DATABASE_PASSWORD
+});
 
-export async function create_user(
-	user: z.infer<typeof models.UserSchema>
-): Promise<string | SessionInfo> {
+const db = drizzle(connection);
+
+export async function create_user(user: schemaTypes.User): Promise<string | SessionInfo> {
 	try {
 		// hash the password
-		console.log("here1");
-		let hashed_password = await argon2.hash(user.password);
-		console.log(hashed_password);
-		// insert the user into the database
-		await conn.execute(
-			"insert into twenty_one_user (password, user_email, first_name, last_name) values (?, ?, ?, ?);",
-			[hashed_password, user.user_email, user.first_name, user.last_name]
-		);
-		console.log("here2");
+		let hashed_password = await argon2.hash(user.password!);
+		user.password = hashed_password;
+		await db.insert(schemaModels.user).values(user);
 		return {
 			jwt: jwt.sign({ user_email: user.user_email }, JWT_SEED),
-			user_email: user.user_email
+			user_email: user.user_email!
 		};
-	} catch {
+	} catch (e) {
 		return "error";
 	}
 }
 
-export async function login_user(
-	user: z.infer<typeof models.UserSchema>
-): Promise<string | SessionInfo> {
+export async function login_user(user: Partial<schemaTypes.User>): Promise<string | SessionInfo> {
 	// verify a user and handle errors - return a json web token if successful
 	try {
 		// get the user from the database
-		let user_result = await conn.execute("select * from twenty_one_user where user_email = ?;", [
-			user.user_email
-		]);
-		let rows = user_result.rows;
+		let user_result = await db
+			.select()
+			.from(schemaModels.user)
+			.where(eq(schemaModels.user.user_email, user.user_email!));
 		// check if the user exists
-		if (rows.length === 0) {
+		if (user_result.length === 0) {
 			return "error";
 		}
 		// verify the password
-		console.log("verifying password");
-		if (await argon2.verify((rows[0] as any).password, user.password)) {
+		if (await argon2.verify(user_result[0].password!, user.password!)) {
 			// create a json web token
 			return {
 				jwt: jwt.sign({ user_email: user.user_email }, JWT_SEED),
-				user_email: user.user_email
+				user_email: user.user_email!
 			};
 		} else {
 			return "error";
@@ -66,15 +63,15 @@ export async function login_user(
 	}
 }
 
-// export async function verifySession(token: string, userEmail: string): Promise<boolean> {
-//     // decode the json web token
-//     try {
-//         let decoded = jwt.verify(token, JWT_SEED) as { userEmail: string };
-//         // check if the user email matches
-//         if (decoded.userEmail === userEmail) {
-//             return true;
-//         } else {
-//             return false;
-//         }
-//     }
-// }
+export async function verify_session(token: string, user_email: string): Promise<boolean> {
+	try {
+		let decoded = jwt.verify(token, JWT_SEED) as { user_email: string };
+		// check if the user email matches
+		if (decoded.user_email === user_email) {
+			return true;
+		}
+		return false;
+	} catch {
+		return false;
+	}
+}
