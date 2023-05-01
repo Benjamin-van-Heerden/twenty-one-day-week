@@ -12,7 +12,7 @@
 			"username": "e5oz6cdtpxebjc2kgjt7",
 			"database": "dev-db",
 			"password": "pscale_pw_Y0T5M0H7JGQuMcV1ZQa4L6gRQpfq0jmtEuE7Nssim0W",
-			"connectString": "mysql://fjxf3vxvi1khmd94xurs:pscale_pw_DsKu6Kb2SHN4LOB4dN9yRVV6S1PNOCny3PBE7J5UjEs@aws.connect.psdb.cloud/dev-db?ssl={\"rejectUnauthorized\":false}"
+			"connectString": "mysql://xf0s5bhe4n8c039r2h0d:pscale_pw_C33vyZgbcLGgtPe5hdpOK8tY1AqVkURRN8O7WSTsJO4@aws.connect.psdb.cloud/dev-db?ssl={\"rejectUnauthorized\":false}"
 		}
 	]
 }

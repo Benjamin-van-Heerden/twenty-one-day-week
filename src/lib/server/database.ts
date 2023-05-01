@@ -44,6 +44,7 @@ export async function login_user(user: Partial<schemaTypes.User>): Promise<strin
 			.select()
 			.from(schemaModels.user)
 			.where(eq(schemaModels.user.user_email, user.user_email!));
+
 		// check if the user exists
 		if (user_result.length === 0) {
 			return "error";
@@ -58,7 +59,8 @@ export async function login_user(user: Partial<schemaTypes.User>): Promise<strin
 		} else {
 			return "error";
 		}
-	} catch {
+	} catch (e) {
+		console.log(e);
 		return "error";
 	}
 }

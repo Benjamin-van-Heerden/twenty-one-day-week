@@ -5,8 +5,11 @@
 <main>
 	<aside>
 		<nav>
-			<li>▶️<a href="/dashboard/{$page.params.userEmail}">21</a></li>
-			<li>📑<a href="/dashboard/{$page.params.userEmail}/journal">Journal</a></li>
+			<li>▶️<a href="/dashboard/{$page.params.user_email}">21</a></li>
+			<li>✅<a href="/dashboard/{$page.params.user_email}/todos">Todos</a></li>
+			<li>📚<a href="/dashboard/{$page.params.user_email}/reading">Reading</a></li>
+			<li>🌟<a href="/dashboard/{$page.params.user_email}/goals">Goals</a></li>
+			<li>📑<a href="/dashboard/{$page.params.user_email}/journal">Journal</a></li>
 		</nav>
 	</aside>
 	<div class="contentDiv">
