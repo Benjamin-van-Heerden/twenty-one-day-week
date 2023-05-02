@@ -38,12 +38,9 @@ export const actions = {
 		throw redirect(302, `/dashboard/${(login_result as any).user_email}`);
 	},
 	register: async ({ cookies, request }) => {
-		console.log("register");
 		const register_form = await superValidate(request, HomeSchemas.RegisterSchema, {
 			id: "register_form"
 		});
-
-		console.log(register_form);
 
 		if (!register_form.valid) return fail(400, { register_form });
 
@@ -52,8 +49,6 @@ export const actions = {
 		const userCreate = await create_user(createUserArgs as any);
 
 		if (userCreate === "error") return fail(500, { register_form });
-
-		console.log(userCreate);
 
 		return { register_form };
 	}

@@ -14,7 +14,10 @@ export const goal = mysqlTable("twenty_one_goal", {
 	id: serial("id").primaryKey(),
 	user_email: varchar("user_email", { length: 255 }),
 	description: varchar("description", { length: 255 }),
-	schedule: varchar("schedule", { length: 255 })
+	time_of_day: varchar("time_of_day", { length: 255, enum: ["morning", "afternoon", "evening"] }),
+	goal_type: varchar("goal_type", { length: 255, enum: ["major", "minor"] }),
+	schedule: varchar("schedule", { length: 255 }),
+	start_date: date("start_date")
 });
 
 export type Goal = InferModel<typeof goal>;

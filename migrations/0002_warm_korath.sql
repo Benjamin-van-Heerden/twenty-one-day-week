@@ -1,0 +1,1 @@
+ALTER TABLE `twenty_one_goal` ADD `time_of_day` varchar(255);

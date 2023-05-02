@@ -98,6 +98,8 @@
 </div>
 
 <main>
+	<p>Benjamin</p>
+
 	{#if !show_register}
 		<form in:fade method="post" action="?/login" use:login_enhance>
 			<input

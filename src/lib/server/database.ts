@@ -4,9 +4,19 @@ import { connect } from "@planetscale/database";
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 
-import { DATABASE_HOST, DATABASE_USERNAME, DATABASE_PASSWORD, JWT_SEED } from "$env/static/private";
+import {
+	DATABASE_HOST_PROD,
+	DATABASE_USERNAME_PROD,
+	DATABASE_PASSWORD_PROD,
+	DATABASE_HOST_DEV,
+	DATABASE_USERNAME_DEV,
+	DATABASE_PASSWORD_DEV,
+	VERCEL_ENV,
+	JWT_SEED
+} from "$env/static/private";
 import type * as schemaTypes from "../db/schema";
 import * as schemaModels from "../db/schema";
+import type { GoalSchema } from "../../routes/dashboard/[user_email]/schemas";
 
 type SessionInfo = {
 	jwt: string;
@@ -14,9 +24,9 @@ type SessionInfo = {
 };
 
 const connection = connect({
-	host: DATABASE_HOST,
-	username: DATABASE_USERNAME,
-	password: DATABASE_PASSWORD
+	host: VERCEL_ENV === "development" ? DATABASE_HOST_DEV : DATABASE_HOST_PROD,
+	username: VERCEL_ENV === "development" ? DATABASE_USERNAME_DEV : DATABASE_USERNAME_PROD,
+	password: VERCEL_ENV === "development" ? DATABASE_PASSWORD_DEV : DATABASE_PASSWORD_PROD
 });
 
 const db = drizzle(connection);
@@ -75,5 +85,36 @@ export async function verify_session(token: string, user_email: string): Promise
 		return false;
 	} catch {
 		return false;
+	}
+}
+
+export async function create_goal(goal: GoalSchema) {
+	try {
+		const insert_goal = {
+			user_email: goal.user_email,
+			description: goal.description,
+			goal_type: goal.goal_type as any,
+			time_of_day: goal.time_of_day as any,
+			schedule: goal.schedule.join(","),
+			start_date: new Date(goal.start_date)
+		};
+		await db.insert(schemaModels.goal).values(insert_goal);
+		return "success";
+	} catch (e) {
+		console.log(e);
+		return "error";
+	}
+}
+
+export async function get_goals(user_email: string) {
+	try {
+		let goals = await db
+			.select()
+			.from(schemaModels.goal)
+			.where(eq(schemaModels.goal.user_email, user_email));
+		return goals;
+	} catch (e) {
+		console.log(e);
+		return "error";
 	}
 }

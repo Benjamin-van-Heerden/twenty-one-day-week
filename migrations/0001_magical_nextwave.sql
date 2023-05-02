@@ -1,0 +1,1 @@
+ALTER TABLE `twenty_one_goal` ADD `start_date` date;

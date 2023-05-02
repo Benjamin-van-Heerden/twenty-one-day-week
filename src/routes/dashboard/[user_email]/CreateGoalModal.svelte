@@ -2,6 +2,7 @@
 	export let user_email: string;
 	export let goal_type: string;
 	export let time_of_day: string;
+	export let start_date: string;
 	let opened = false;
 </script>
 
@@ -20,19 +21,22 @@
 			<h3>New Goal</h3>
 			<p>Goal Type: <strong>{goal_type}</strong></p>
 			<p>Time of Day: <strong>{time_of_day}</strong></p>
+			<p>Start Day: <strong>{start_date}</strong></p>
 			<form method="post" action="?/create">
 				<input name="user_email" value={user_email} hidden />
+				<input name="goal_type" value={goal_type} hidden />
 				<input name="time_of_day" value={time_of_day} hidden />
+				<input name="start_date" value={start_date} hidden />
 				<textarea name="description" placeholder="Goal Description" />
 				<small>Active Days:</small>
 				<div class="grid">
-					<label><input type="checkbox" name="work_days" value="1" /><span>MON</span></label>
-					<label><input type="checkbox" name="work_days" value="2" /><span>TUE</span></label>
-					<label><input type="checkbox" name="work_days" value="3" /><span>WED</span></label>
-					<label><input type="checkbox" name="work_days" value="4" /><span>THU</span></label>
-					<label><input type="checkbox" name="work_days" value="5" /><span>FRI</span></label>
-					<label><input type="checkbox" name="work_days" value="6" /><span>SAT</span></label>
-					<label><input type="checkbox" name="work_days" value="0" /><span>SUN</span></label>
+					<label><input type="checkbox" name="schedule" value="1" /><span>MON</span></label>
+					<label><input type="checkbox" name="schedule" value="2" /><span>TUE</span></label>
+					<label><input type="checkbox" name="schedule" value="3" /><span>WED</span></label>
+					<label><input type="checkbox" name="schedule" value="4" /><span>THU</span></label>
+					<label><input type="checkbox" name="schedule" value="5" /><span>FRI</span></label>
+					<label><input type="checkbox" name="schedule" value="6" /><span>SAT</span></label>
+					<label><input type="checkbox" name="schedule" value="0" /><span>SUN</span></label>
 				</div>
 				<button type="submit">Create Goal</button>
 				<button class="cancel" type="button" on:click={() => (opened = false)}>Cancel</button>

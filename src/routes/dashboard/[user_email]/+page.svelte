@@ -3,9 +3,27 @@
 	import { page } from "$app/stores";
 
 	export let data;
+	const goals = data.goals;
+
+	const display_date_formatter = new Intl.DateTimeFormat("en-US", {
+		weekday: "long",
+		day: "2-digit",
+		month: "2-digit",
+		year: "numeric"
+	});
+	const active_date_formatter = new Intl.DateTimeFormat("en-US", {
+		day: "2-digit",
+		month: "2-digit",
+		year: "numeric"
+	});
 	const email = $page.params.user_email;
 	let yesterday_today = false; // false if today, true if yesterday
-	$: working_date = yesterday_today ? new Date(Date.now() - 86400000) : new Date();
+	$: display_date = yesterday_today
+		? display_date_formatter.format(new Date(Date.now() - 86400000))
+		: display_date_formatter.format(new Date());
+	$: active_date = yesterday_today
+		? active_date_formatter.format(new Date(Date.now() - 86400000))
+		: active_date_formatter.format(new Date());
 </script>
 
 <main>
@@ -32,24 +50,44 @@
 				<span>Today</span>
 			</label>
 		</div>
-		<h2>Active Day: <strong>{working_date}</strong></h2>
+		<h2>Active Day: <u><strong>{display_date}</strong></u></h2>
 	</div>
 	<div class="goalBox">
 		<div class="goals">
 			<h1>Morning</h1>
 			<div class="major">
 				<h4>Major</h4>
-				<ul>
-					<li />
+				<ul class="goalList">
+					{#if typeof goals !== "string"}
+						{#each goals as goal (goal.id)}
+							{#if goal.time_of_day === "morning" && goal.goal_type === "major"}
+								<li>
+									<div class="goalBox">
+										<input type="checkbox" /><strong>{goal.description}</strong>
+									</div>
+								</li>
+							{/if}
+						{/each}
+					{/if}
 				</ul>
-				<CreateGoalModal user_email={email} goal_type="major" time_of_day="morning" />
+				<CreateGoalModal
+					start_date={active_date}
+					user_email={email}
+					goal_type="major"
+					time_of_day="morning"
+				/>
 			</div>
 			<div class="minor">
 				<h4>Minor</h4>
 				<ul>
 					<li />
 				</ul>
-				<CreateGoalModal user_email={email} goal_type="minor" time_of_day="morning" />
+				<CreateGoalModal
+					start_date={active_date}
+					user_email={email}
+					goal_type="minor"
+					time_of_day="morning"
+				/>
 			</div>
 		</div>
 		<div class="graph" />
@@ -62,14 +100,24 @@
 				<ul>
 					<li />
 				</ul>
-				<CreateGoalModal user_email={email} goal_type="major" time_of_day="afternoon" />
+				<CreateGoalModal
+					start_date={active_date}
+					user_email={email}
+					goal_type="major"
+					time_of_day="afternoon"
+				/>
 			</div>
 			<div class="minor">
 				<h4>Minor</h4>
 				<ul>
 					<li />
 				</ul>
-				<CreateGoalModal user_email={email} goal_type="minor" time_of_day="afternoon" />
+				<CreateGoalModal
+					start_date={active_date}
+					user_email={email}
+					goal_type="minor"
+					time_of_day="afternoon"
+				/>
 			</div>
 		</div>
 		<div class="graph" />
@@ -82,14 +130,24 @@
 				<ul>
 					<li />
 				</ul>
-				<CreateGoalModal user_email={email} goal_type="major" time_of_day="evening" />
+				<CreateGoalModal
+					start_date={active_date}
+					user_email={email}
+					goal_type="major"
+					time_of_day="evening"
+				/>
 			</div>
 			<div class="minor">
 				<h4>Minor</h4>
 				<ul>
 					<li />
 				</ul>
-				<CreateGoalModal user_email={email} goal_type="minor" time_of_day="evening" />
+				<CreateGoalModal
+					start_date={active_date}
+					user_email={email}
+					goal_type="minor"
+					time_of_day="evening"
+				/>
 			</div>
 		</div>
 		<div class="graph" />
@@ -110,6 +168,7 @@
 		flex-direction: row;
 		align-items: center;
 		justify-content: center;
+		margin-bottom: 1rem;
 	}
 
 	.yesterdayTodayInner label {

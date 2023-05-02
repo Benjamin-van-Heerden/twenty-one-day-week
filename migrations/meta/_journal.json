@@ -8,6 +8,27 @@
       "when": 1682974546535,
       "tag": "0000_minor_firelord",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1683014150531,
+      "tag": "0001_magical_nextwave",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1683016458679,
+      "tag": "0002_warm_korath",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1683021004771,
+      "tag": "0003_peaceful_doctor_spectrum",
+      "breakpoints": true
     }
   ]
 }
